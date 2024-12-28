@@ -1,5 +1,7 @@
 const puppeteer = require("puppeteer");
-const { sendEmail } = require("./transporter");
+const {
+	sendTelegramNotification,
+} = require("./transporter");
 const logger = require("pino")();
 
 const { launch } = puppeteer;
@@ -44,7 +46,7 @@ const run = async () => {
 	if (newDate) {
 		logger.info(`New date found: ${newDate}`);
 		logger.info("Sending email...");
-		await sendEmail(newDate);
+		await sendTelegramNotification(newDate);
 		logger.info("Email sent successfully.");
 	}
 
