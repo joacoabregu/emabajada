@@ -1,0 +1,16 @@
+{
+  "name": "embajada-esp",
+  "version": "1.0.0",
+  "description": "scrapper embajada",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "joaco",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "nodemailer": "^6.9.16",
+    "puppeteer": "^23.11.1"
+  }
+}
