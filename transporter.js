@@ -13,7 +13,7 @@ const transporter = createTransport({
   });
 
   const sendEmail = async (newDate) => {
-    try {
+    
       const mailOptions = {
         from: 'abregujoaquin@gmail.com', 
         to: 'abregujoaquin@gmail.com',
@@ -22,10 +22,6 @@ const transporter = createTransport({
       };
   
       await transporter.sendMail(mailOptions);
-      console.log('Correo enviado exitosamente.');
-    } catch (error) {
-      console.error('Error al enviar el correo:', error);
-    }
   };
 
   module.exports = {

@@ -1,19 +1,21 @@
 const puppeteer = require('puppeteer');
 const { sendEmail } = require('./transporter');
+const logger = require('pino')();
 
 const { launch } = puppeteer;
 
 const URL = 'https://www.cgeonline.com.ar/informacion/apertura-de-citas.html';
 
 const run = async () => {
+    logger.info('Starting scraper...');
     const browser = await launch();
     
-      const page = await browser.newPage();
+    const page = await browser.newPage();
 
   await page.goto(URL);
 
   const newDate = await page.evaluate(() => {
-    const rows = document.querySelectorAll('tr'); // Seleccionar todas las filas
+    const rows = document.querySelectorAll('tr');
 
     for (let row of rows) {
       const firstColumn = row.querySelector('td:nth-child(1)');
@@ -28,7 +30,7 @@ const run = async () => {
         ) {
           const dateText = dateColumn.innerText;
 
-          if (dateText !== '22/11/2024') {
+          if (dateText !== '21/11/2024') {
             return dateText;
           }
         }
@@ -38,11 +40,22 @@ const run = async () => {
   });
 
   if (newDate) {
+    logger.info(`New date found: ${newDate}`);
+    logger.info('Sending email...');
     await sendEmail(newDate);
+    logger.info('Email sent successfully.');
   }
 
   await browser.close();
-
+  logger.info('Scraper finished successfully.');
 }
 
-run();
+const start = async () => {
+  try {
+      await run(); 
+  } catch (error) {
+      logger.error(error);
+  }
+};
+
+start();
