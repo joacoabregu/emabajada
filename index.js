@@ -38,6 +38,8 @@ const run = async () => {
     }
     return null;
   });
+  
+  await browser.close();
 
   if (newDate) {
     logger.info(`New date found: ${newDate}`);
@@ -46,7 +48,6 @@ const run = async () => {
     logger.info('Email sent successfully.');
   }
 
-  await browser.close();
   logger.info('Scraper finished successfully.');
 }
 
