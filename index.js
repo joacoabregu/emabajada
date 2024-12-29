@@ -1,12 +1,12 @@
 const puppeteer = require("puppeteer");
-const {
-	sendTelegramNotification,
-} = require("./transporter");
+const { sendTelegramNotification } = require("./transporter");
 const logger = require("pino")();
 
 const { launch } = puppeteer;
 
 const URL = "https://www.cgeonline.com.ar/informacion/apertura-de-citas.html";
+const SENDING_NOTIFICATION = "Sending notification...";
+const NOTIFICATION_SENT = "Notification sent successfully";
 
 const run = async () => {
 	logger.info("Starting scraper...");
@@ -16,12 +16,15 @@ const run = async () => {
 
 	await page.goto(URL);
 
-	const newDate = await page.evaluate(() => {
+	const result = await page.evaluate(() => {
 		const rows = document.querySelectorAll("tr");
+		let newDate = null;
+		let newStatus = null;
 
-		for (let row of rows) {
+		for (const row of rows) {
 			const firstColumn = row.querySelector("td:nth-child(1)");
 			const dateColumn = row.querySelector("td:nth-child(2)");
+			const statusColumn = row.querySelector("td:nth-child(3)");
 
 			if (firstColumn && dateColumn) {
 				const firstColumnText = firstColumn.innerText;
@@ -31,26 +34,40 @@ const run = async () => {
 					firstColumnText.includes("renovación y primera vez")
 				) {
 					const dateText = dateColumn.innerText;
+					const statusText = statusColumn.innerText;
 
 					if (dateText !== "22/11/2024") {
-						return dateText;
+						newDate = dateText;
 					}
+					if (statusText !== "fecha por confirmar") {
+						newStatus = statusText;
+					}
+					break;
 				}
 			}
 		}
-		return null;
+		return { newDate, newStatus };
 	});
 
 	await browser.close();
 
+	const { newDate, newStatus } = result;
 	if (newDate) {
-		logger.info(`New date found: ${newDate}`);
-		logger.info("Sending email...");
-		await sendTelegramNotification(newDate);
-		logger.info("Email sent successfully.");
+		const message = `New date found: ${newDate}`;
+		logger.info(message);
+		logger.info(SENDING_NOTIFICATION);
+		await sendTelegramNotification(message);
+		logger.info(NOTIFICATION_SENT);
 	}
 
-	logger.info("Scraper finished successfully.");
+	if (newStatus) {
+		logger.info(`New status found: ${newStatus}`);
+		logger.info(SENDING_NOTIFICATION);
+		await sendTelegramNotification(newStatus);
+		logger.info(NOTIFICATION_SENT);
+	}
+
+	logger.info("Scraper finished successfully");
 };
 
 const start = async () => {
