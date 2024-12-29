@@ -75,6 +75,11 @@ const start = async () => {
 		await run();
 	} catch (error) {
 		logger.error(error);
+		try {
+			await sendTelegramNotification(`There was an error: ${error}`);
+		} catch (notificationError) {
+			logger.info('There was an error sending the error notification', notificationError);
+		}
 	}
 };
 
