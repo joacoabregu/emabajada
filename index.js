@@ -10,7 +10,9 @@ const NOTIFICATION_SENT = "Notification sent successfully";
 
 const run = async () => {
 	logger.info("Starting scraper...");
-	const browser = await launch();
+	const browser = await launch({
+		args: ['--no-sandbox', '--disable-setuid-sandbox'],
+	});
 
 	const page = await browser.newPage();
 
