@@ -10,6 +10,11 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: create env file
+        run: |
+          touch .env
+          echo CHAT_ID=${{ secrets.CHAT_ID }} >> .env
+          echo TELEGRAM_TOKEN=${{ secrets.TELEGRAM_TOKEN }} >> .env
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
