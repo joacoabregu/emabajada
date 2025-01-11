@@ -13,7 +13,7 @@
 		"dotenv": "^16.4.7",
 		"nodemailer": "^6.9.16",
 		"pino": "^9.6.0",
-		"puppeteer": "^23.11.1"
+		"puppeteer": "^24.0.0"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4"
